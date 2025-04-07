@@ -4,24 +4,30 @@ const server: Swiftlet = new Swiftlet(1939, undefined, true);
 
 server.route({
   endpoint: "/",
-  method: "get",
-  callback: (req: any) => console.log("ping pong!", req.query("test")),
-  res: {
-    statusCode: 201,
-    json: {
-      ping: "pong!",
-    },
+  method: "GET",
+  response: (req: any) => {
+    return {
+      statusCode: 200,
+      json: {
+        testing: "Hello World",
+        query: req.query("query"),
+        date: new Date().toLocaleString(),
+      },
+    };
   },
 });
 
 server.route({
   endpoint: "/test",
-  method: "get",
-  callback: () => console.log("hello world!"),
-  res: {
-    statusCode: 201,
-    json: {
-      hello: "world!",
-    },
+  method: "GET",
+  response: (req: any) => {
+    return {
+      statusCode: 200,
+      json: {
+        testing: "json",
+        query: req.query("query"),
+        date: new Date().toLocaleString(),
+      },
+    };
   },
 });

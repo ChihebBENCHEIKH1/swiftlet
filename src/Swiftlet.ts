@@ -40,7 +40,6 @@ export default class Swiftlet {
             param: [""],
           };
 
-          route.callback ? route.callback(searchRequest) : null;
           if (this.debug)
             debugLog([
               `REQUEST [${new Date().toLocaleString()}]:`,
@@ -48,11 +47,10 @@ export default class Swiftlet {
               `http://${this.host}:${this.port}${req.url}`,
             ]);
 
-          res.writeHead(route.res.statusCode, {
+          res.writeHead(route.response(searchRequest).statusCode, {
             "Content-Type": "application/json",
           });
-          res.write(JSON.stringify(route.res.json));
-
+          res.write(JSON.stringify(route.response(searchRequest).json));
           res.end();
           responseSent = true;
           break;
