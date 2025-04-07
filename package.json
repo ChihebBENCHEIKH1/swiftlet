@@ -4,10 +4,11 @@
   "description": "A lightweight and unopinionated web framework for Node.js, designed for speed, simplicity, and flexibility.",
   "main": "./dist/Swiftlet.js",
   "scripts": {
-    "start": "jest ./dist/__tests__/lib.spec.js",
+    "start": "node ./dist/__test__/lib.spec.js",
     "compile": "tsc -p ./tsconfig.json",
     "clean": "rm -r ./dist",
-    "test": "jest ./dist/__test__/"
+    "test": "jest ./dist/__test__/",
+    "postinstall": "npm run compile"
   },
   "repository": {
     "type": "git",
