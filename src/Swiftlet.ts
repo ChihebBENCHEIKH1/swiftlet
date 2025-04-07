@@ -4,6 +4,7 @@ import { IRoute } from "./interfaces/IRoute";
 import { IRequest } from "./interfaces/IRequest";
 import parseUrlQuery from "./modules/parseUrlQuery";
 import { IResponse } from "./interfaces/IResponse";
+import getReqBody from "./modules/getBody";
 
 export default class Swiftlet {
   private host: string = "127.0.0.1";
@@ -30,36 +31,47 @@ export default class Swiftlet {
       const query: QueryTupleArray = haveQuery
         ? parseUrlQuery(req.url ? req.url.split("?")[1] : "")
         : undefined;
-      for (let route of this.routes) {
-        if (url === route.endpoint) {
-          const searchRequest: IRequest = {
-            query: (idx: string): string | undefined => {
-              for (let tuple of query ? query : []) {
-                if (idx === tuple[0]) return tuple[1];
-              }
-            },
-            param: [""],
-            body: {},
-          };
+      for (let i: number = 0; i < this.routes.length; i++) {
+        if (url === this.routes[i].endpoint) {
+          const route: IRoute = this.routes[i];
 
-          const routeRes: IResponse = route.response(searchRequest);
+          getReqBody(req, (body: any) => {
+            const searchRequest: IRequest = {
+              query: (idx: string): string | undefined => {
+                for (let tuple of query ? query : []) {
+                  if (idx === tuple[0]) return tuple[1];
+                }
+              },
+              param: undefined,
+              body: body,
+            };
 
-          if (this.debug)
-            debugLog([
-              `REQUEST [${new Date().toLocaleString()}]:`,
-              route.method.toUpperCase(),
-              routeRes.statusCode,
-              `http://${this.host}:${this.port}${req.url}`,
-            ]);
+            const routeRes: IResponse = route.response(searchRequest);
 
-          res.writeHead(routeRes.statusCode, {
-            "Content-Type": "application/json",
+            if (this.debug)
+              debugLog([
+                `REQUEST [${new Date().toLocaleString()}]:`,
+                route.method.toUpperCase(),
+                routeRes.statusCode,
+                `http://${this.host}:${this.port}${req.url}`,
+              ]);
+
+            res.writeHead(routeRes.statusCode, {
+              "Content-Type": "application/json",
+            });
+            res.write(JSON.stringify(routeRes.json));
+
+            res.end();
+            return;
           });
-          res.write(JSON.stringify(routeRes.json));
-          res.end();
-          responseSent = true;
-          break;
         }
+
+        setTimeout(() => {
+          if (i === this.routes.length - 1) {
+            res.end(`Invalid route ${url}`);
+            return;
+          }
+        }, 50);
       }
 
       if (!responseSent) {
