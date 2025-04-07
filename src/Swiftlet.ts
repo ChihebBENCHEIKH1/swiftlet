@@ -5,6 +5,7 @@ import { IRequest } from "./interfaces/IRequest";
 import parseUrlQuery from "./modules/parseUrlQuery";
 import { IResponse } from "./interfaces/IResponse";
 import getReqBody from "./modules/getBody";
+import getRequestQuery from "./modules/getRequestQuery";
 
 export default class Swiftlet {
   private host: string = "127.0.0.1";
@@ -37,11 +38,8 @@ export default class Swiftlet {
 
           getReqBody(req, (body: any) => {
             const searchRequest: IRequest = {
-              query: (idx: string): string | undefined => {
-                for (let tuple of query ? query : []) {
-                  if (idx === tuple[0]) return tuple[1];
-                }
-              },
+              query: (idx: string): string | undefined =>
+                getRequestQuery(idx, query),
               param: undefined,
               body: body,
             };
