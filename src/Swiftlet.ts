@@ -40,17 +40,20 @@ export default class Swiftlet {
             param: [""],
           };
 
+          const routeRes: any = route.response(searchRequest);
+
           if (this.debug)
             debugLog([
               `REQUEST [${new Date().toLocaleString()}]:`,
               route.method.toUpperCase(),
+              routeRes.statusCode,
               `http://${this.host}:${this.port}${req.url}`,
             ]);
 
-          res.writeHead(route.response(searchRequest).statusCode, {
+          res.writeHead(routeRes.statusCode, {
             "Content-Type": "application/json",
           });
-          res.write(JSON.stringify(route.response(searchRequest).json));
+          res.write(JSON.stringify(routeRes.json));
           res.end();
           responseSent = true;
           break;
