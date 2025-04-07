@@ -1,13 +1,11 @@
 import { IRequest } from "./IRequest";
+import { IResponse } from "./IResponse";
 
-interface IResponse {
-  (req: IRequest): {
-    statusCode: number;
-    json: any;
-  };
+interface IResponseFunction {
+  (req: IRequest): IResponse;
 }
 export interface IRoute {
   method: ReqMethod;
   endpoint: string;
-  response: IResponse;
+  response: IResponseFunction;
 }

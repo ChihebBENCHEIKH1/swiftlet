@@ -3,6 +3,7 @@ import debugLog from "./utils/debugLog";
 import { IRoute } from "./interfaces/IRoute";
 import { IRequest } from "./interfaces/IRequest";
 import parseUrlQuery from "./modules/parseUrlQuery";
+import { IResponse } from "./interfaces/IResponse";
 
 export default class Swiftlet {
   private host: string = "127.0.0.1";
@@ -38,9 +39,10 @@ export default class Swiftlet {
               }
             },
             param: [""],
+            body: {},
           };
 
-          const routeRes: any = route.response(searchRequest);
+          const routeRes: IResponse = route.response(searchRequest);
 
           if (this.debug)
             debugLog([

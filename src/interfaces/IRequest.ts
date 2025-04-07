@@ -4,4 +4,5 @@ interface IQueryGet {
 export interface IRequest {
   query: IQueryGet;
   param: Array<string>;
+  body: any;
 }

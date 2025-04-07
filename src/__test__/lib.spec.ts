@@ -1,3 +1,5 @@
+import { IRequest } from "../interfaces/IRequest";
+import { IResponse } from "../interfaces/IResponse";
 import Swiftlet from "../Swiftlet";
 
 const server: Swiftlet = new Swiftlet(1939, undefined, true);
@@ -5,12 +7,12 @@ const server: Swiftlet = new Swiftlet(1939, undefined, true);
 server.route({
   endpoint: "/",
   method: "GET",
-  response: (req: any) => {
+  response: (request: IRequest): IResponse => {
     return {
       statusCode: 200,
       json: {
         testing: "Hello World",
-        query: req.query("query"),
+        query: request.query("query"),
         date: new Date().toLocaleString(),
       },
     };
@@ -20,13 +22,26 @@ server.route({
 server.route({
   endpoint: "/test",
   method: "GET",
-  response: (req: any) => {
+  response: (request: IRequest): IResponse => {
     return {
       statusCode: 200,
       json: {
         testing: "json",
-        query: req.query("query"),
+        query: request.query("query"),
         date: new Date().toLocaleString(),
+      },
+    };
+  },
+});
+
+server.route({
+  endpoint: "/body",
+  method: "POST",
+  response: (req: IRequest): IResponse => {
+    return {
+      statusCode: 200,
+      json: {
+        body: req.body,
       },
     };
   },
