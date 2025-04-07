@@ -1,5 +1,5 @@
 export interface IRoute {
-  method: string;
+  method: ReqMethod;
   endpoint: string;
   body?: string;
   callback?: Function;

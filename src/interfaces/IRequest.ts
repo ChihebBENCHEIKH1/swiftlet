@@ -1,4 +1,7 @@
+interface IQueryGet {
+  (idx: string): string | undefined;
+}
 export interface IRequest {
-  query: QueryTupleArray;
+  query: IQueryGet;
   param: Array<string>;
 }

@@ -32,7 +32,11 @@ export default class Swiftlet {
       for (let route of this.routes) {
         if (url === route.endpoint) {
           const searchRequest: IRequest = {
-            query,
+            query: (idx: string): string | undefined => {
+              for (let tuple of query ? query : []) {
+                if (idx === tuple[0]) return tuple[1];
+              }
+            },
             param: [""],
           };
 
