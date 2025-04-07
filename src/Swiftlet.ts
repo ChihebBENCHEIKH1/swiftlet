@@ -1,5 +1,5 @@
 import http, { Server, IncomingMessage, ServerResponse } from "http";
-import debugLog from "./modules/debugLog";
+import debugLog from "./utils/debugLog";
 import { IRoute } from "./interfaces/IRoute";
 import { IRequest } from "./interfaces/IRequest";
 
