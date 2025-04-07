@@ -1,4 +1,4 @@
 export interface IRequest {
-  query: Array<string>;
+  query: QueryTupleArray;
   param: Array<string>;
 }

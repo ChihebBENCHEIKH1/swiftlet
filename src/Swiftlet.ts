@@ -2,6 +2,7 @@ import http, { Server, IncomingMessage, ServerResponse } from "http";
 import debugLog from "./utils/debugLog";
 import { IRoute } from "./interfaces/IRoute";
 import { IRequest } from "./interfaces/IRequest";
+import parseUrlQuery from "./modules/parseUrlQuery";
 
 export default class Swiftlet {
   private host: string = "127.0.0.1";
@@ -20,12 +21,18 @@ export default class Swiftlet {
 
   private server: Server = http.createServer(
     (req: IncomingMessage, res: ServerResponse): void => {
-      let responseSent = false; // Flag to track if a response has been sent
+      let responseSent = false;
+      const url: string = req.url ? req.url.split("?")[0] : "/";
 
+      const haveQuery: boolean = req.url?.split("?")[1] ? true : false;
+
+      const query: QueryTupleArray = haveQuery
+        ? parseUrlQuery(req.url ? req.url.split("?")[1] : "")
+        : undefined;
       for (let route of this.routes) {
-        if (req.url === route.endpoint) {
+        if (url === route.endpoint) {
           const searchRequest: IRequest = {
-            query: [""],
+            query,
             param: [""],
           };
 
