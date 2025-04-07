@@ -1,6 +1,7 @@
 import http, { Server, IncomingMessage, ServerResponse } from "http";
 import debugLog from "./modules/debugLog";
 import { IRoute } from "./interfaces/IRoute";
+import { IRequest } from "./interfaces/IRequest";
 
 export default class Swiftlet {
   private host: string = "127.0.0.1";
@@ -23,8 +24,12 @@ export default class Swiftlet {
 
       for (let route of this.routes) {
         if (req.url === route.endpoint) {
-          route.callback ? route.callback() : null;
+          const searchRequest: IRequest = {
+            query: [""],
+            param: [""],
+          };
 
+          route.callback ? route.callback(searchRequest) : null;
           if (this.debug)
             debugLog([
               `REQUEST [${new Date().toLocaleString()}]:`,

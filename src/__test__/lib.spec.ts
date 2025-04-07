@@ -17,7 +17,7 @@ server.route({
 server.route({
   endpoint: "/test",
   method: "get",
-  callback: () => console.log("hello world!"),
+  callback: (req: any) => console.log("ping pong!", req.query["a"]),
   res: {
     statusCode: 201,
     json: {
