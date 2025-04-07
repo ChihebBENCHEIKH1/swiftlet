@@ -33,9 +33,12 @@ export default class Swiftlet {
         ? parseUrlQuery(req.url ? req.url.split("?")[1] : "")
         : undefined;
       for (let i: number = 0; i < this.routes.length; i++) {
-        if (url === this.routes[i].endpoint) {
-          const route: IRoute = this.routes[i];
+        const route: IRoute = this.routes[i];
 
+        if (
+          url === route.endpoint &&
+          req.method === route.method.toUpperCase()
+        ) {
           getReqBody(req, (body: any) => {
             const searchRequest: IRequest = {
               query: (idx: string): string | undefined =>
@@ -49,7 +52,7 @@ export default class Swiftlet {
             if (this.debug)
               debugLog([
                 `REQUEST [${new Date().toLocaleString()}]:`,
-                route.method.toUpperCase(),
+                req.method,
                 routeRes.statusCode,
                 `http://${this.host}:${this.port}${req.url}`,
               ]);
@@ -62,11 +65,19 @@ export default class Swiftlet {
             res.end();
             return;
           });
+          return;
         }
 
         setTimeout(() => {
           if (i === this.routes.length - 1) {
-            res.end(`Invalid route ${url}`);
+            if (this.debug)
+              debugLog([
+                `REQUEST [${new Date().toLocaleString()}]:`,
+                req.method,
+                404,
+                `http://${this.host}:${this.port}${req.url}`,
+              ]);
+            res.end(`Invalid route: ${req.method} 404 ${url}`);
             return;
           }
         }, 50);
