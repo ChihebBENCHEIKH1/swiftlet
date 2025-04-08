@@ -14,12 +14,12 @@ Ideal for building small to medium APIs and web apps while giving you full contr
 ## 📦 Installation
 
 ```bash
-npm install swiftlet
+npm install @chiheb_ben_cheikh/swiftlet
 ```
 ## 🚀 Quick Start
 
 ```js
-const Swiftlet = require('swiftlet');
+const Swiftlet = require('@chiheb_ben_cheikh/swiftlet');
 const app = new Swiftlet(8080, '*', '127.0.0.1', true);
 
 app.route({
