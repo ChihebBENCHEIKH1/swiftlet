@@ -13,14 +13,19 @@ export default class Swiftlet {
   private host: string = "127.0.0.1";
   private port: number = 0;
   private debug: boolean = false;
-
+  private acao: string = "*"; // Access-Control-Allow-Origin
   private routes: Array<IRoute> = [];
 
-  constructor(port: number | string = 8080, host?: string, debug?: boolean) {
+  constructor(
+    port: number | string = 8080,
+    acao?: string,
+    host?: string,
+    debug?: boolean
+  ) {
     this.port = typeof port == "string" ? parseInt(port) : port;
     this.host = host ? host : this.host;
     this.debug = debug ? debug : this.debug;
-
+    this.acao = acao ? acao : this.acao;
     this.start();
   }
 
@@ -60,18 +65,26 @@ export default class Swiftlet {
 
             const routeRes: IResponse = route.response(searchRequest);
 
-            if (this.debug)
-              debugLog([
-                `REQUEST [${new Date().toLocaleString()}]:`,
-                req.method,
-                routeRes.statusCode,
-                `http://${this.host}:${this.port}${req.url}`,
-              ]);
-
             res.writeHead(routeRes.statusCode, {
               "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": this.acao,
+              Vary: "Origin",
             });
-            res.write(JSON.stringify(routeRes.json));
+
+            if (this.acao === "*" || this.acao === req.headers.host) {
+              if (this.debug)
+                debugLog([
+                  `REQUEST [${new Date().toLocaleString()}]:`,
+                  req.method,
+                  routeRes.statusCode,
+                  `http://${this.host}:${this.port}${req.url}`,
+                ]);
+
+              // write json response
+              res.write(JSON.stringify(routeRes.json));
+            } else {
+              req.connection.destroy();
+            }
 
             res.end();
             responseSent = true;

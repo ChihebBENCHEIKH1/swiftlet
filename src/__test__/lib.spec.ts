@@ -2,7 +2,7 @@ import { IRequest } from "../interfaces/IRequest";
 import { IResponse } from "../interfaces/IResponse";
 import Swiftlet from "../Swiftlet";
 
-const server: Swiftlet = new Swiftlet(1939, undefined, true);
+const server: Swiftlet = new Swiftlet(1939, "*", undefined, true);
 
 server.route({
   endpoint: "/",
