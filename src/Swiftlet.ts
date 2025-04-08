@@ -64,6 +64,7 @@ export default class Swiftlet {
             res.end();
             return;
           });
+          return;
         }
       }
       setTimeout(() => {
@@ -82,6 +83,7 @@ export default class Swiftlet {
         res.writeHead(404, { "Content-Type": "text/plain" });
         res.end(`Invalid route ${req.url}`);
       }
+      return;
     }
   );
 
