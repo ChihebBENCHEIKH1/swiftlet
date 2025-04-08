@@ -1,0 +1,5 @@
+src/
+*.ts
+tests/
+*.config.js
+tsconfig.json

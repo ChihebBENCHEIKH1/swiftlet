@@ -1,6 +1,6 @@
 import { IRequest } from "../interfaces/IRequest";
 import { IResponse } from "../interfaces/IResponse";
-import Swiftlet from "../Swiftlet";
+import Swiftlet from "@chiheb_ben_cheikh/swiftlet";
 
 const server: Swiftlet = new Swiftlet(1939, "*", undefined, true);
 
