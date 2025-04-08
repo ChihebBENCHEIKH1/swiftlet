@@ -8,3 +8,4 @@ declare type ReqMethod =
   | "POST"
   | "PUT"
   | "DELETE";
+declare type ParamTupleArray = QueryTupleArray;

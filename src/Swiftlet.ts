@@ -6,6 +6,8 @@ import parseUrlQuery from "./modules/parseUrlQuery";
 import { IResponse } from "./interfaces/IResponse";
 import getReqBody from "./modules/getBody";
 import getRequestQuery from "./modules/getRequestQuery";
+import parseUrlParam from "./modules/parseUrlParam";
+import getRequestParam from "./modules/getRequestParam";
 
 export default class Swiftlet {
   private host: string = "127.0.0.1";
@@ -25,24 +27,34 @@ export default class Swiftlet {
   private server: Server = http.createServer(
     (req: IncomingMessage, res: ServerResponse): void => {
       let responseSent = false;
-      const url: string = req.url ? req.url.split("?")[0] : "/";
+      let url: string = req.url ? req.url.split("?")[0] : "/";
 
       for (let route_ of this.routes) {
         const route: IRoute = route_;
-        if (
-          url === route.endpoint &&
-          req.method === route.method.toUpperCase()
-        ) {
-          const haveQuery: boolean = req.url?.split("?")[1] ? true : false;
+        const endpoint: string = route.endpoint;
 
+        // Regular expression to handle dynamic parameters
+        const routeRegex = new RegExp(
+          `^${endpoint.replace(/:[^\s/]+/g, "([\\w-]+)")}$`
+        );
+        const match = url.match(routeRegex);
+
+        // Check if the URL matches the route and method
+        if (match && req.method === route.method.toUpperCase()) {
+          const haveQuery: boolean = req.url?.split("?")[1] ? true : false;
           const query: QueryTupleArray = haveQuery
             ? parseUrlQuery(req.url ? req.url.split("?")[1] : "")
             : undefined;
+          const param: ParamTupleArray = match
+            ? parseUrlParam(req.url ? req.url : "", route.endpoint)
+            : undefined;
+
           getReqBody(req, (body: any) => {
             const searchRequest: IRequest = {
               query: (idx: string): string | undefined =>
-                getRequestQuery(idx, query),
-              param: undefined,
+                haveQuery ? getRequestQuery(idx, query) : undefined,
+              param: (idx: string): string | undefined =>
+                param ? getRequestParam(idx, param) : undefined,
               body: body,
             };
 
@@ -62,28 +74,27 @@ export default class Swiftlet {
             res.write(JSON.stringify(routeRes.json));
 
             res.end();
-            return;
+            responseSent = true;
           });
           return;
         }
       }
-      setTimeout(() => {
-        if (this.debug)
-          debugLog([
-            `REQUEST [${new Date().toLocaleString()}]:`,
-            req.method,
-            404,
-            `http://${this.host}:${this.port}${req.url}`,
-          ]);
-        res.end(`Invalid route: ${req.method} 404 ${url}`);
-        return;
-      }, 0.5);
 
       if (!responseSent) {
+        setTimeout(() => {
+          if (this.debug)
+            debugLog([
+              `REQUEST [${new Date().toLocaleString()}]:`,
+              req.method,
+              404,
+              `http://${this.host}:${this.port}${req.url}`,
+            ]);
+          res.end(`Invalid route: ${req.method} 404 ${url}`);
+        }, 0.5);
+
         res.writeHead(404, { "Content-Type": "text/plain" });
         res.end(`Invalid route ${req.url}`);
       }
-      return;
     }
   );
 

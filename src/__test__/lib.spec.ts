@@ -46,3 +46,18 @@ server.route({
     };
   },
 });
+
+server.route({
+  endpoint: "/param/:username/:id",
+  method: "GET",
+  response: (request: IRequest): IResponse => {
+    return {
+      statusCode: 200,
+      json: {
+        test: "test",
+        usernameParam: request.param("username"),
+        idParam: request.param("id"),
+      },
+    };
+  },
+});
