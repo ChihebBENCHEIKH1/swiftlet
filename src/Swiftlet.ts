@@ -27,17 +27,17 @@ export default class Swiftlet {
       let responseSent = false;
       const url: string = req.url ? req.url.split("?")[0] : "/";
 
-      const haveQuery: boolean = req.url?.split("?")[1] ? true : false;
-
-      const query: QueryTupleArray = haveQuery
-        ? parseUrlQuery(req.url ? req.url.split("?")[1] : "")
-        : undefined;
       for (let route_ of this.routes) {
         const route: IRoute = route_;
         if (
           url === route.endpoint &&
           req.method === route.method.toUpperCase()
         ) {
+          const haveQuery: boolean = req.url?.split("?")[1] ? true : false;
+
+          const query: QueryTupleArray = haveQuery
+            ? parseUrlQuery(req.url ? req.url.split("?")[1] : "")
+            : undefined;
           getReqBody(req, (body: any) => {
             const searchRequest: IRequest = {
               query: (idx: string): string | undefined =>
