@@ -19,7 +19,10 @@ npm install @chiheb_ben_cheikh/swiftlet
 ## 🚀 Quick Start
 
 ```js
-const Swiftlet = require('@chiheb_ben_cheikh/swiftlet');
+
+import SwiftletModule from '@chiheb_ben_cheikh/swiftlet';
+const Swiftlet = SwiftletModule.default;
+
 const app = new Swiftlet(8080, '*', '127.0.0.1', true);
 
 app.route({
@@ -39,4 +42,5 @@ app.route({
     json: { userId: req.param('id') }
   }),
 });
+
 ```
